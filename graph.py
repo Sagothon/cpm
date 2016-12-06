@@ -17,6 +17,13 @@ def CPM(G):
                 G.node[successor]['from'] = node  # zaznaczam z którego wierzchołka była najgorsza droga, potrzebne do ścieżki krytycznej
 
         unvisited.remove(unvisited[0])
+#=========================================== Graf fo tyłu
+    unvisited = nx.topological_sort(G).reverse()
+    while unvisited:
+        node = unvisited[0]
+        for predecessor in G.predecessors(node):
+            waga = G.edge[node][predecessor]['weight']
+
 
     # ========================================= znajduję koniec grafu ================================
     # czyli node z najwiekszym t1
@@ -35,8 +42,6 @@ def CPM(G):
         if last_node['from'] == 0:
             break
     sciezka_krytyczna.reverse()
-    print(sciezka_krytyczna)
-
     # ====================================== rysowanko grafu ============================================
     pos = nx.spring_layout(G)
 
@@ -48,7 +53,7 @@ def CPM(G):
     nx.draw_networkx_nodes(G, pos,
                            nodelist=sciezka_krytyczna,
                            node_color='b',
-                           node_size=500,
+                           node_size=1100,
                            alpha=0.8)
 
     plt.show()

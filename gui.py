@@ -9,12 +9,11 @@ class Window(QWidget):
         self.layout.addWidget(widget)
         self.groupBoxesTab.append(widget)
 
-    def licz(self):
+    def licz(self):    #dodaję wierzcholki do grafu i odpalam liczenie
         for i in self.groupBoxesTab:
             activity = i.ed1.text()
             how_long = i.ed2.text()
             predecessor = re.split('[,]', i.ed3.text())
-            print(predecessor)
 
             for j in predecessor:
                 self.Graph.add_edge(j, activity, weight=int(how_long))
