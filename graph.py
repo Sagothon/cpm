@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
 # ================================= algorytm przechodzenia grafu po najdłuższych ścieżkach ======================================
 # po drodze uzupełniam wartości 't1'
 
@@ -17,13 +18,25 @@ def CPM(G):
                 G.node[successor]['from'] = node  # zaznaczam z którego wierzchołka była najgorsza droga, potrzebne do ścieżki krytycznej
 
         unvisited.remove(unvisited[0])
-#=========================================== Graf fo tyłu
-    unvisited = nx.topological_sort(G).reverse()
+
+#=========================================== Graf od tyłu, liczę t2 i luz ==============================
+    unvisited = nx.topological_sort(G)
+
+    for nod in unvisited:
+        if G.out_degree(nod) == 0:
+            G.node[nod]['t2'] = G.node[nod]['t1']
+    unvisited.reverse()
     while unvisited:
         node = unvisited[0]
         for predecessor in G.predecessors(node):
-            waga = G.edge[node][predecessor]['weight']
+            waga = G.edge[predecessor][node]['weight']
+            t1 = G.node[node]['t1']
+            roznica = t1 - waga
+            if G.node[predecessor]['t2'] < roznica:
+                G.node[predecessor]['t2'] = t1 - waga
+                G.node[predecessor]['luz'] = G.node[predecessor]['t2'] - G.node[predecessor]['t1']
 
+        unvisited.remove(unvisited[0])
 
     # ========================================= znajduję koniec grafu ================================
     # czyli node z najwiekszym t1
@@ -45,15 +58,28 @@ def CPM(G):
     # ====================================== rysowanko grafu ============================================
     pos = nx.spring_layout(G)
 
-    nx.draw(G, pos, with_labels=True)
-    node_labels = nx.get_node_attributes(G,'t1')
-    nx.draw_networkx_labels(G, pos, labels = node_labels)
+    nx.draw_networkx(G, pos, with_labels=True, label='dfdd')
+
     edge_labels = nx.get_edge_attributes(G, 'weight')
     nx.draw_networkx_edge_labels(G, pos, labels=edge_labels)
-    nx.draw_networkx_nodes(G, pos,
-                           nodelist=sciezka_krytyczna,
-                           node_color='b',
-                           node_size=1100,
-                           alpha=0.8)
+    nx.draw_networkx_nodes(G, pos, nodelist=sciezka_krytyczna, node_color='b', node_size=1600)
 
+    #for key, value in pos.items():
+    #    value[0] += 0.02
+    #node_labels = nx.get_node_attributes(G, 't2')
+    #nx.draw_networkx_labels(G, pos, labels=node_labels)
+
+    #for key, value in pos.items():
+    #    value[0] -= 0.04
+    #node_labels = nx.get_node_attributes(G, 't1')
+    #nx.draw_networkx_labels(G, pos, labels=node_labels)
+
+    #for key, value in pos.items():
+    #    value[0] += 0.02
+    #    value[1] += 0.02
+    #node_labels = nx.get_node_attributes(G, 'luz')
+    #nx.draw_networkx_labels(G, pos, labels=node_labels)
+
+
+    plt.title(sciezka_krytyczna)
     plt.show()
