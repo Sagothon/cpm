@@ -1,7 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
 # ================================= algorytm przechodzenia grafu po najdłuższych ścieżkach ======================================
 # po drodze uzupełniam wartości 't1'
 
@@ -10,32 +9,17 @@ def CPM(G):
     while unvisited:  # pętla dopóki jest coś nieodwiedzonego
         node = unvisited[0]  # biorę kolejne nieodwiedzone wierchołki
         for successor in G.successors_iter(node):  # iteracja po sąsiadach noda
-            waga = G.edge[node][successor]['weight']  # waga krawedzi miedzy wierzchołkami
-            droga = G.node[node]['t1']  # droga od początku grafu do wierzchołka który jest rozpatrywany
-            suma_droga_waga = droga + waga
-            if G.node[successor]['t1'] < suma_droga_waga:  # przypisuję najgorszą drogę
-                G.node[successor]['t1'] = suma_droga_waga
+            time = G.node[successor]['time']  # waga krawedzi miedzy wierzchołkami
+            full_time = G.node[node]['t1']  # droga od początku grafu do wierzchołka który jest rozpatrywany
+            sum_of_times = time + full_time
+            if G.node[successor]['t1'] == 0:
+            	G.node[successor]['t1'] = sum_of_times
+            	G.node[successor]['from'] = node
+            elif G.node[successor]['t1'] < sum_of_times:  # przypisuję najgorszą drogę
+                G.node[successor]['t1'] = sum_of_times
                 G.node[successor]['from'] = node  # zaznaczam z którego wierzchołka była najgorsza droga, potrzebne do ścieżki krytycznej
-
-        unvisited.remove(unvisited[0])
-
-#=========================================== Graf od tyłu, liczę t2 i luz ==============================
-    unvisited = nx.topological_sort(G)
-
-    for nod in unvisited:
-        if G.out_degree(nod) == 0:
-            G.node[nod]['t2'] = G.node[nod]['t1']
-    unvisited.reverse()
-    while unvisited:
-        node = unvisited[0]
-        for predecessor in G.predecessors(node):
-            waga = G.edge[predecessor][node]['weight']
-            t1 = G.node[node]['t1']
-            roznica = t1 - waga
-            if G.node[predecessor]['t2'] < roznica:
-                G.node[predecessor]['t2'] = t1 - waga
-                G.node[predecessor]['luz'] = G.node[predecessor]['t2'] - G.node[predecessor]['t1']
-
+        if G.out_degree() == 0:
+        	gjfdg
         unvisited.remove(unvisited[0])
 
     # ========================================= znajduję koniec grafu ================================
@@ -49,12 +33,15 @@ def CPM(G):
 
         # ======================================== idę od końca i buduję ścieżkę krytyczną ==========================
     sciezka_krytyczna = []
+    #print(last_node)
+    #sciezka_krytyczna.append(last_node)
     while 1:
         sciezka_krytyczna.append(last_node['from'])
         last_node = G.node[last_node['from']]
         if last_node['from'] == 0:
             break
     sciezka_krytyczna.reverse()
+    print(sciezka_krytyczna)
     # ====================================== rysowanko grafu ============================================
     pos = nx.spring_layout(G)
 
