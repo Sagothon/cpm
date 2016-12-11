@@ -13,10 +13,15 @@ class Window(QWidget):
         for i in self.groupBoxesTab:
             activity = i.ed1.text()
             how_long = i.ed2.text()
+            #predecessor = re.split('[,]', i.ed3.text())
+            self.Graph.add_node(activity, time=int(how_long))
+
+        for i in self.groupBoxesTab:
+            activity = i.ed1.text()
             predecessor = re.split('[,]', i.ed3.text())
 
             for j in predecessor:
-                self.Graph.add_edge(j, activity, weight=int(how_long))
+                self.Graph.add_edge(j, activity)
 
         nx.set_node_attributes(self.Graph, 't1', 0)
         nx.set_node_attributes(self.Graph, 't2', 0)
